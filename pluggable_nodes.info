@@ -1,0 +1,5 @@
+name = Pluggable Nodes
+description = Allows nodes to be plugged into Panels, using a view mode.
+core = 7.x
+
+dependencies[] = ctools

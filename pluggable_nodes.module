@@ -1,0 +1,29 @@
+<?php
+
+function pluggable_nodes_ctools_plugin_directory($module, $plugin) {
+  return 'plugins/' . $plugin;
+}
+
+function pluggable_nodes_menu() {
+  return array(
+    'system/autocomplete/node' => array(
+      'title' => 'Autocomplete for nodes',
+      'page callback' => '_pluggable_nodes_autocomplete',
+      'access callback' => TRUE,
+      'type' => MENU_CALLBACK,
+    ),
+  );
+}
+
+function _pluggable_nodes_autocomplete($string) {
+  $efq = new EntityFieldQuery();
+  $efq->entityCondition('entity_type' ,'node');
+  $efq->propertyCondition('title', $string . '%', 'LIKE');
+  $rs = $efq->execute();
+  $matches = array();
+  foreach ($rs['node'] as $row) {
+    $node = node_load($row->nid);
+    $matches[check_plain($node->title) . ' [' . $row->nid . ']'] = check_plain($node->title) . '[' . $row->nid . ']';
+  }
+  return drupal_json_output($matches);
+}
